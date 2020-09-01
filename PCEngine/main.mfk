@@ -1,5 +1,10 @@
 // ..\millfork.exe -Xr -t pce main.mfk to build PCE rom
 
+//	TODO 
+//	fix VSYNC 
+//	add sprites
+//	add input 
+
 import PCEngine
 
 void main() {

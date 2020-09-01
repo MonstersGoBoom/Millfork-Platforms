@@ -61,6 +61,9 @@ macro asm void enable_irq()
 {
 	lda #%00000101 
 	sta irq_disable
+	lda #$cc 
+	sta $105
+
 	cli
 }
 
@@ -74,12 +77,13 @@ void PCE_vdc_irq()
     phy
 	  lda VDC_status
 		and #$20
+		cmp #$00
 		beq exit
 		stz	framesync 
 exit:
-		stz irq_status
 		stz $6
-
+		lda #$80 
+		sta VDC_data_l
     ply
     plx
     pla
@@ -88,6 +92,15 @@ irq2:
 	}	
 }
 
+void PCE_timer_irq()
+{
+	asm 
+	{
+		sta $1403	;ACK TIMER
+		stz $0c01	;Turn off timer
+		rti
+	}
+}
 
 
 void WaitVSync()
@@ -163,5 +176,6 @@ word z,e
 }
 
 const array irq_vector @$FFF8 = @word [PCE_vdc_irq.addr]
+const array timer_vector @$FFFa = @word [PCE_timer_irq.addr]
 const array reset_vector @$FFFE = @word [main.addr]
 
