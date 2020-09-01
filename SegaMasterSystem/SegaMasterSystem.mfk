@@ -1,0 +1,172 @@
+
+#if not(SEGA_SMS)
+#warn SMS module should be only used on SMS hardware
+#else 
+
+import joy
+
+const word VDP_TILES = $4000
+const word VDP_SPRITES = $6000
+const word VDP_STABy = $3f00
+const word VDP_STABxi = $3f80
+const word VDP_TILE_CLUT = $c000
+const word VDP_SPRITE_CLUT = $c010
+
+const byte VDP_MODE_CTRL_0 = 0
+const byte VDP_MODE_CTRL_1 = 1
+const byte VDP_NAMETABLE_BASE = 2
+const byte VDP_COLORTABLE_BASE = 3
+const byte VDP_PATTERN_BASE = 4
+const byte VDP_SATB_BASE = 5
+const byte VDP_SPR_PATTERN_BASE = 6
+const byte VDP_BG_COLOR = 7
+const byte VDP_X_SCROLL = 8
+const byte VDP_Y_SCROLL = 9
+const byte VDP_LINE_COUNTER = 10
+
+
+
+const byte VDP_REG0_VSCROLL_LOCK=%10000000
+const byte VDP_REG0_HSCROLL_LOCK=%01000000
+const byte VDP_REG0_HIDE_LEFT	=%00100000
+const byte VDP_REG0_EN_LINE_IRQ	=%00010000
+const byte VDP_REG0_SPRH_SHIFT	=%00001000
+const byte VDP_REG0_MODE4		=%00000100
+const byte VDP_REG0_EXT_HEIGHT	=%00000010
+const byte VDP_REG0_EN_SYNC		=%00000001
+
+const byte VDP_REG1_EN_DISPLAY	=%01000000
+const byte VDP_REG1_EN_FRM_IRQ	=%00100000
+const byte VDP_REG1_224_MODE	=%00010000
+const byte VDP_REG1_240_MODE	=%00001000
+const byte VDP_REG1_HSPR16		=%00000010
+const byte VDP_REG1_SPRZOOM		=%00000001
+
+byte framesync 
+
+const byte VDP_DATA =$be
+const byte VDP_CTRL =$bf
+
+
+macro asm void VOUT(byte const reg, byte a) {
+	out(reg),a
+}
+
+macro asm void VREG(byte const reg, byte a) {
+	out(VDP_CTRL),a
+	ld a,reg 
+	or $80
+	out(VDP_CTRL),a
+}
+
+macro asm void disable_irq() {
+    di
+}
+macro asm void enable_irq() {
+	ei
+	im 1
+}
+
+void __start()@0{
+	asm {
+		DI
+//	set stack pointer
+		ld 	sp,$dff0
+//	set up the mapper 
+		ld  de, $FFFC
+		ld 	a,0 
+		ld 	(de),a 
+		inc de 		
+		ld 	(de),a 
+		inc de 		
+		ld 	a,1 
+		ld 	(de),a 
+		inc de 		
+		ld 	a,2
+		ld 	(de),a 
+	}
+	main()
+}
+
+
+interrupt void _irq()@$38 {
+	//	ack IRQ
+	asm {
+		in a,(VDP_CTRL)
+	}
+	framesync = 0
+	enable_irq()	
+}
+
+interrupt void _nmi()@$66 {
+}
+
+void WaitVsync() {
+	framesync+=1
+	while (framesync!=0){}
+}
+
+alias input_a = input_btn
+byte input_b
+byte input_select
+byte input_start
+
+inline void read_joy1() {
+	byte value 
+	reset_joy()  
+	asm {
+		in a,($dc)
+		ld (value),a
+	}
+	if value & 1 == 0 { input_dy -= 1 }
+	if value & 2 == 0 { input_dy +=	1 }
+	if value & 4 == 0 { input_dx -= 1 }
+	if value & 8 == 0 { input_dx += 1 }
+	if value & 16 == 0 { input_a = 1 }
+}
+
+inline void read_joy2() {
+	byte valuea,valueb 
+	reset_joy()  
+	asm {
+		in a,($dc)
+		ld (valuea),a
+		in a,($dd)
+		ld (valueb),a
+	}
+	valuea>>=6	//	move port two bits down 
+	valuea|=valueb<<2
+	if valuea & 1 == 0 { input_dy -= 1 }
+	if valuea & 2 == 0 { input_dy +=	1 }
+	if valuea & 4 == 0 { input_dx -= 1 }
+	if valuea & 8 == 0 { input_dx += 1 }
+	if valuea & 16 == 0 { input_a = 1 }
+}
+
+void VUPLOAD(word dest,pointer source,word size) {
+	word i 
+	asm {
+		in a,(VDP_CTRL)
+	}
+	VOUT(VDP_CTRL,dest.lo)
+	VOUT(VDP_CTRL,dest.hi)
+	for i,0,until,size {		
+		VOUT(VDP_DATA,source[i])
+	}
+}
+
+void VFILL(word dest,byte value,word size) {
+	word i 
+	VOUT(VDP_CTRL,dest.lo)
+	VOUT(VDP_CTRL,dest.hi)
+	for i,0,paralleluntil,size {
+		VOUT(VDP_DATA,value)
+  }
+}
+
+void VADDR(word dest) {
+	VOUT(VDP_CTRL,dest.lo)
+	VOUT(VDP_CTRL,dest.hi)
+}
+
+#endif
