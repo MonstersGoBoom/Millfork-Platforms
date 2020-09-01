@@ -14,4 +14,9 @@ Sega Master System support.
 
 ![](gifs/sms.gif)
 
+Preliminary PC Engine support.
+
+![](gifs/pce.gif)
+
+
 
