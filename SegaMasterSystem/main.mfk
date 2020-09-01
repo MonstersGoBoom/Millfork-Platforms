@@ -67,26 +67,22 @@ void main()
 
 		//	sprite Y is a 64 byte array of just Y positions
 		VOUT(VDP_CTRL,$00)
-		VOUT(VDP_CTRL,$3f)	//	updating sprite Y 
+		VOUT(VDP_CTRL,$3f| $40)	//	updating sprite Y 
 
 		VOUT(VDP_DATA,spriteY0)
 		VOUT(VDP_DATA,spriteY1)
 
-		//	stop sprite updates ( disables all sprites after those ^^ )
-		VOUT(VDP_DATA,208 )
-		VOUT(VDP_DATA,208 )
-
-		//	sprite IX is a 128 byte array of ID followed by X for each sprite 
-		//	IXIXIXIXIX 
+		//	sprite XI is a 128 byte array of X followed by Sprite ID for each sprite 
+		//	XIXIXIXIXI 
 
 		VOUT(VDP_CTRL,$80)
-		VOUT(VDP_CTRL,$3f)	//	updating sprite X & ID 
+		VOUT(VDP_CTRL,$3f | $40)	//	updating sprite X & ID 
 		//	sprite 0 
-		VOUT(VDP_DATA,0)
 		VOUT(VDP_DATA,spriteX0)
-		//	sprite 1
 		VOUT(VDP_DATA,0)
+		//	sprite 1
 		VOUT(VDP_DATA,spriteX1)
+		VOUT(VDP_DATA,0)
 
 		read_joy1()
 		spriteX0+=input_dx

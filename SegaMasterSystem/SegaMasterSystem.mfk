@@ -149,7 +149,7 @@ void VUPLOAD(word dest,pointer source,word size) {
 		in a,(VDP_CTRL)
 	}
 	VOUT(VDP_CTRL,dest.lo)
-	VOUT(VDP_CTRL,dest.hi)
+	VOUT(VDP_CTRL,(dest.hi) | $40)  
 	for i,0,until,size {		
 		VOUT(VDP_DATA,source[i])
 	}
@@ -158,8 +158,8 @@ void VUPLOAD(word dest,pointer source,word size) {
 void VFILL(word dest,byte value,word size) {
 	word i 
 	VOUT(VDP_CTRL,dest.lo)
-	VOUT(VDP_CTRL,dest.hi)
-	for i,0,paralleluntil,size {
+	VOUT(VDP_CTRL,(dest.hi))  
+	for i,0,until,size {
 		VOUT(VDP_DATA,value)
   }
 }
