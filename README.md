@@ -15,6 +15,7 @@ Sega Master System support.
 ![](gifs/sms.gif)
 
 Preliminary PC Engine support.
+Vsync doesn't work. No sprite or input support as yet.
 
 ![](gifs/pce.gif)
 
