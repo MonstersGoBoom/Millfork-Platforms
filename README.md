@@ -6,6 +6,8 @@ Simple demo's to set up a specific system and get graphics and sprites and input
 
 So far MSX and Sega Master System is available. 
 
+PCEngine is W.I.P. see below.
+
 MSX support.
 
 ![](gifs/msx.gif)
