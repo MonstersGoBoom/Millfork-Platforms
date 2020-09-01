@@ -1,7 +1,7 @@
-// ..\millfork.exe -Xr -t pce main.mfk to build PCE rom
+// ..\millfork.exe -Xr -t pce main.mfk
+// to build PCE rom
 
 //	TODO 
-//	fix VSYNC 
 //	add sprites
 //	add input 
 import PCEngine
@@ -17,7 +17,7 @@ byte ticker
   VDC_reg(VDC_BXR,0)
   VDC_reg(VDC_BYR,$0000)
   VDC_reg(VDC_MWR,0)
-  VDC_reg(VDC_HSR,$0000)
+  VDC_reg(VDC_HSR,$0202)
   VDC_reg(VDC_HDR,$041f)
   VDC_reg(VDC_VPR,$0d07)
   VDC_reg(VDC_VDW,$00df)
@@ -29,9 +29,9 @@ byte ticker
 	VDC_paletteupload(0,1,Palette)
   ticker = 0
 	//	display on 
+  VDC_reg(VDC_CR,VDP_IRQ_ENABLE | VDP_BG_ENABLE | VDP_SPR_ENABLE)
 	enable_irq();
 
-  VDC_reg(VDC_CR,VDP_IRQ_ENABLE | VDP_BG_ENABLE | VDP_SPR_ENABLE)
 
 
   z=0
@@ -41,7 +41,7 @@ byte ticker
 		WaitVSync();
 		VDC_color_address_l = 0
  		VDC_color_address_h = 0
-  	VDC_color_data=z&0x7;
+ 		VDC_color_data=z;
   }
 }
 //	use 8 bit source and add attribute 

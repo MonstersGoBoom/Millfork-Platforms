@@ -41,6 +41,7 @@ macro asm void PCE_init() {
   sei	;	disable IRQ
   csh ;	Change Speed High
   cld ; Clear Decimal Flag
+	stz $0c00
   lda #$ff 				; hardware 	$0000-$1fff
   tam #%00000001 
   lda #$f8 				;	ram 			$2000-$3fff
@@ -59,19 +60,28 @@ macro asm void PCE_init() {
   lda #0					;	prgrom0	$e000-$ffff 
   tam #%01000000 
 
+	lda #$7
+	sta $1402
+	stz $1403
+
+	
 
 }
 //	set the VDC register reg, with value 
 
 macro asm void enable_irq()
 {
-	lda #%00000101 
-	sta irq_disable
 
+	lda #%00000001 
+	sta irq_disable
+	stz irq_status
 	cli
 }
 
 volatile byte framesync 
+
+volatile byte vsr
+//	not correct but working ?
 
 void PCE_vdc_irq()
 {
@@ -80,13 +90,21 @@ void PCE_vdc_irq()
     phx
     phy
 	  lda VDC_status
+		sta vsr
+		and #$2 
+		beq vsynccheck
+		stz $106
+		stz $106
+
+vsynccheck:
+		lda vsr
 		and #$20
 		beq exit
-		stz	framesync 
+		inc	framesync 
 exit:	
 		lda #$00 
 		sta VDC_status
-		
+
     ply
     plx
     pla
@@ -108,8 +126,7 @@ void PCE_timer_irq()
 
 void WaitVSync()
 {
-	framesync=1;
-	while (framesync!=0){}
+	while (framesync==0){}
 }
 
 
