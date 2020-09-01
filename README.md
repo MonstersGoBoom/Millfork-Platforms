@@ -1,6 +1,6 @@
 "Millfork-Platforms" 
 
-Dumping ground for platform support.
+Dumping ground for platform support for https://github.com/KarolS/millfork
 
 Simple demo's to set up a specific system and get graphics and sprites and input working.
 
