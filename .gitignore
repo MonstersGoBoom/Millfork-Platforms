@@ -2,3 +2,5 @@ MSX/main.asm
 MSX/main.rom
 SegaMasterSystem/main.asm
 SegaMasterSystem/main.sms
+PCEngine/main.pce
+PCEngine/main.asm
