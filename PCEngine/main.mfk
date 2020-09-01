@@ -4,7 +4,6 @@
 //	fix VSYNC 
 //	add sprites
 //	add input 
-
 import PCEngine
 
 void main() {
@@ -18,7 +17,7 @@ byte ticker
   VDC_reg(VDC_BXR,0)
   VDC_reg(VDC_BYR,$0000)
   VDC_reg(VDC_MWR,0)
-  VDC_reg(VDC_HSR,$0202)
+  VDC_reg(VDC_HSR,$0000)
   VDC_reg(VDC_HDR,$041f)
   VDC_reg(VDC_VPR,$0d07)
   VDC_reg(VDC_VDW,$00df)
@@ -31,7 +30,9 @@ byte ticker
   ticker = 0
 	//	display on 
 	enable_irq();
-  VDC_reg(VDC_CR,%0000000011001100)
+
+  VDC_reg(VDC_CR,VDP_IRQ_ENABLE | VDP_BG_ENABLE | VDP_SPR_ENABLE)
+
 
   z=0
   while(true)

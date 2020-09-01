@@ -16,6 +16,12 @@ const byte VDC_VDW 	=13
 const byte VDC_VCR 	=14 
 const byte VDC_DCR 	=15 
 
+const word VDP_SPR_COLLISION_ENABLE = %0000000000000001
+const word VDP_SPR_OVERFLOW_IRQ 		= %0000000000000010
+const word VDP_RCR_ENABLE				 		= %0000000000000100
+const word VDP_IRQ_ENABLE				 		= %0000000000001000
+const word VDP_SPR_ENABLE				 		= %0000000001000000
+const word VDP_BG_ENABLE				 		= %0000000010000000
 
 volatile byte	VDC_status	@$0100
 volatile byte	VDC_data_l	@$0102
@@ -61,8 +67,6 @@ macro asm void enable_irq()
 {
 	lda #%00000101 
 	sta irq_disable
-	lda #$cc 
-	sta $105
 
 	cli
 }
@@ -77,13 +81,12 @@ void PCE_vdc_irq()
     phy
 	  lda VDC_status
 		and #$20
-		cmp #$00
 		beq exit
 		stz	framesync 
-exit:
-		stz $6
-		lda #$80 
-		sta VDC_data_l
+exit:	
+		lda #$00 
+		sta VDC_status
+		
     ply
     plx
     pla
