@@ -12,24 +12,24 @@ byte ticker
 
   PCE_init()
 
-  VDC_reg(VDC_CR,0)
-  VDC_reg(VDC_RCR,0)
-  VDC_reg(VDC_BXR,0)
-  VDC_reg(VDC_BYR,$0000)
-  VDC_reg(VDC_MWR,0)
-  VDC_reg(VDC_HSR,$0202)
-  VDC_reg(VDC_HDR,$041f)
-  VDC_reg(VDC_VPR,$0d07)
-  VDC_reg(VDC_VDW,$00df)
-  VDC_reg(VDC_VCR,$0003)
-  VDC_reg(VDC_DCR,$0010)  
+  VREG(VDC_CR,0)
+  VREG(VDC_RCR,0)
+  VREG(VDC_BXR,0)
+  VREG(VDC_BYR,$0000)
+  VREG(VDC_MWR,0)
+  VREG(VDC_HSR,$0202)
+  VREG(VDC_HDR,$041f)
+  VREG(VDC_VPR,$0d07)
+  VREG(VDC_VDW,$00df)
+  VREG(VDC_VCR,$0003)
+  VREG(VDC_DCR,$0010)  
 
-	VDC_upload8($0000,Tilemap.addr,Tilemap.length,0)
-	VDC_upload($1000,Tiles.addr,Tiles.length)
-	VDC_paletteupload(0,1,Palette)
+	VDC_upload8($0000,Tilemap.addr,Tilemap.length,$1)	//	force tiles to be + 256 + index
+	VDC_UPLOAD($1000,Tiles.addr,Tiles.length)
+	VCE_UPLOAD(0,1,Palette)
   ticker = 0
 	//	display on 
-  VDC_reg(VDC_CR,VDP_IRQ_ENABLE | VDP_BG_ENABLE | VDP_SPR_ENABLE)
+  VREG(VDC_CR,VDP_IRQ_ENABLE | VDP_BG_ENABLE | VDP_SPR_ENABLE)
 	enable_irq();
 
 
@@ -39,9 +39,9 @@ byte ticker
   {
     z+=1
 		WaitVSync();
-		VDC_color_address_l = 0
- 		VDC_color_address_h = 0
- 		VDC_color_data=z;
+		VCE_ADDRESS_l = 0
+ 		VCE_ADDRESS_h = 0
+ 		VCE_DATA_w=z;
   }
 }
 //	use 8 bit source and add attribute 
@@ -65,7 +65,7 @@ word z
   while (z<size)
   {
     VDC_data_l = source[z]
-    VDC_data_h = 0x01;
+    VDC_data_h = attribute;
     z+=1
   }
 }

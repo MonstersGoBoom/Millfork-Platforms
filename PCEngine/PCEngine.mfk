@@ -26,16 +26,16 @@ const word VDP_BG_ENABLE				 		= %0000000010000000
 volatile byte	VDC_status	@$0100
 volatile byte	VDC_data_l	@$0102
 volatile byte	VDC_data_h	@$0103
-volatile word	_VDC_data   @$0102
+//volatile word	VDC_DATA_w  @$0102
 volatile byte irqport @$1400
 volatile byte irq_disable @$1402
 volatile byte irq_status @$1403
 
-volatile byte VDC_color_address_l  @$0402
-volatile byte VDC_color_address_h  @$0403
-volatile byte VDC_color_data_l     @$0404
-volatile byte VDC_color_data_h     @$0405
-volatile word VDC_color_data	      @$0404
+volatile byte VCE_ADDRESS_l  @$0402
+volatile byte VCE_ADDRESS_h  @$0403
+volatile byte VCE_DATA_l     @$0404
+volatile byte VCE_DATA_h     @$0405
+volatile word VCE_DATA_w	   @$0404
 
 macro asm void PCE_init() {
   sei	;	disable IRQ
@@ -126,18 +126,18 @@ void PCE_timer_irq()
 
 void WaitVSync()
 {
-	while (framesync==0){}
+//	while (framesync!=0){}
 }
 
 
-macro asm void VDC_reg(byte const reg,word const value) {
+macro asm void VREG(byte const reg,word const value) {
   st0 #(reg)	
   st1 #lo(value)
   st2 #hi(value)
 }
 
 //	send one word of data
-inline asm void VDC_data(word value) {
+inline asm void VWRITE(word value) {
   st0 #2
   lda lo(value)
   sta $102
@@ -148,7 +148,7 @@ inline asm void VDC_data(word value) {
 
 //	send many words 
 //	removes need to write address and write flag 
-void VDC_upload(word dest,pointer source,word size)
+void VDC_UPLOAD(word dest,pointer source,word size)
 {
 word z
   asm 
@@ -175,22 +175,22 @@ word z
 }
 
 //	upload the palette
-void VDC_paletteupload(byte index,byte number,pointer source)
+void VCE_UPLOAD(byte index,byte number,pointer source)
 {
 word z,e
   z=index 
   z<<=4
-  z+=$4000
+  z.hi|=$40
   e = number+1
   e<<=4 
   e+= z
-  VDC_color_address_l = lo(z)
-  VDC_color_address_h = hi(z)
+  VCE_ADDRESS_l = lo(z)
+  VCE_ADDRESS_h = hi(z)
   while (z<e)
   {
-    VDC_color_data_l = source[z]
+    VCE_DATA_l = source[z]
     z+=1
-    VDC_color_data_h = source[z]
+    VCE_DATA_h = source[z]
     z+=1
   }
 }
