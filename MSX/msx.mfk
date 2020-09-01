@@ -1,0 +1,88 @@
+//	using MSX bios
+
+import joy
+
+
+void WaitVsync() {
+	asm 
+	{
+		ei
+		ld hl,$fc9e
+		ld a,(hl)
+waitv:
+		cp (hl)
+		jr z,waitv
+	}
+}
+
+
+asm void disable_display() @$0041 extern
+asm void enable_display() @$0044 extern
+asm void enable_sprites() @$0069 extern
+asm void screen_mode(byte a) @$005f extern 
+asm byte getch() @$009f extern 
+asm byte RDVDP() @$013E extern 
+void WRTVDP(byte data,byte port){
+	asm {
+		ld a,(data)
+		ld b,a
+		ld a,(port)
+		ld c,a
+		call $47
+	}
+}
+asm byte getstck(byte a) @$00d5 extern 
+asm byte gettrig() @$00d8 extern 
+
+//	FORCLR (0F3E9h) = Text color
+//BAKCLR (0F3EAh) = Background color
+//BDRCLR (0F3EBh) = Border color
+
+inline void setcolor(byte fg,byte bg,byte border) {
+	asm {
+	ld a,(fg) 
+	ld ($f3e9),a
+	ld a,(bg) 
+	ld ($f3ea),a
+	ld a,(border) 
+	ld ($f3eb),a
+	call $62
+	}
+}
+inline void VUPLOAD(word vramaddress,word memoryaddress,word length) {
+	asm {
+		ld de,(vramaddress)
+		ld hl,(memoryaddress)
+		ld bc,(length)
+		call $005c	
+	ret
+	}
+}
+
+inline void VFILL(word vramaddress,byte value,word length) {
+	asm {
+		ld hl,(vramaddress)
+		ld bc,(length)
+		ld a,(value)
+		call $0056	
+	ret
+	}
+}
+
+inline void read_joy1() {
+
+const array directionsX=[0,0,1,1,1,0,$ff,$ff,$ff]
+const array directionsY=[0,$ff,$ff,0,1,1,1,0,$ff]
+
+byte value
+	reset_joy()
+	if gettrig()!=0 {
+		input_btn = 1
+	}
+	else {
+		input_btn = 0
+	}
+	value = getstck(0)
+	input_dx = directionsX[value]
+	input_dy = directionsY[value]
+}
