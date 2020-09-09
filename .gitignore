@@ -6,3 +6,5 @@ PCEngine/main.pce
 PCEngine/main.asm
 tools/*
 
+GameboyColor/main.asm
+GameboyColor/main.gb
