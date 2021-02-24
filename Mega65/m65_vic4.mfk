@@ -1,0 +1,28 @@
+
+#if not(MEGA_65) 
+#warn m65_vic module should be only used on MEGA_65-compatible targets
+#endif
+
+byte vic4_key 				@$D02F 
+word vic4_top_border_pos @$d048
+word vic4_bottom_border_pos @$d04a
+word vic4_text_xpos @$d04c
+word vic4_text_ypos @$d04e
+word vic4_xpos @$d050
+word vic4_fine_raster @$d052
+byte vic4_mode @$d054
+word vic4_charstep @$D058
+byte vic4_charscale_x @$D05a
+byte vic4_charscale_y @$D05b
+word vic4_charcount @$D05e
+long vic4_screen_ptr @$D060
+word vic4_color_ptr @$D064
+int24 vic4_char_ptr @$D068
+byte vic4_palette_select @$D070
+byte vic4_bp16_ens @$D071
+array(byte) vic4_red_channel[256] @$d100
+array(byte) vic4_green_channel[256] @$d200
+array(byte) vic4_blue_channel[256] @$d300
+
+
+

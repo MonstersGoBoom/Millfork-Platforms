@@ -14,12 +14,22 @@ void put_hex(word offset,byte value) {
 
 void main() {
 
+byte q,q_swap 
+
 	asm { sei }
 	
 	M65_40hz()
 	M65_defaultmem()
 	M65_VIC4Enable()
 	put_hex(0,$ff)
+
+	for q,0,until,256 {
+		q_swap = ((q&$f)<<4) | (q>>4)
+		vic4_red_channel[q] = q_swap
+		vic4_blue_channel[q] = q_swap
+		vic4_green_channel[q] = q_swap
+	}
+	
 
 	while true {
 		asm 
@@ -29,8 +39,8 @@ vbl:
 			sta $d020 
 			cmp #$f0
 			bne vbl
-
 		}
+		vic4_screen_ptr+=1	
 	}
 }
 

@@ -2,6 +2,10 @@
 #warn m65_hardware module should be only used on MEGA_65-compatible targets
 #endif
 import cpu6510
+import c64_vic
+import c64_sid
+import c64_cia
+import m65_vic4
 
 // have to use this method as we can't just store opcodes directly 
 const array _m65_internal_defaultmem_=[$a9,$00,$aa,$a8,$4b,$5c,$ea,$60]
