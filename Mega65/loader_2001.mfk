@@ -1,0 +1,12 @@
+#if not(CBM)
+#warn loader_0801 module should be only used on Commodore targets
+#endif
+
+const array _basic_loader @$2001 = [
+    $09,$20,$0a,$00,
+    $fe,$02,$30,$00,
+		$13,$20,	//	start 
+    $14,$00,
+		$9e,
+		$38,$32,$32,$34,00,00,00,00,00,00,00,00,00,00,00,00,00,00
+    ]

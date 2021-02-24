@@ -1,0 +1,22 @@
+#if not(MEGA_65)
+#warn m65_hardware module should be only used on MEGA_65-compatible targets
+#endif
+import cpu6510
+
+// have to use this method as we can't just store opcodes directly 
+const array _m65_internal_defaultmem_=[$a9,$00,$aa,$a8,$4b,$5c,$ea,$60]
+asm void M65_defaultmem() @_m65_internal_defaultmem_ extern
+
+asm macro void M65_40hz()
+{
+	lda #$41
+	sta $0
+}
+
+asm macro void M65_VIC4Enable()
+{
+	lda #$47
+	sta $d02f 
+	lda #$53
+	sta $d02f
+}

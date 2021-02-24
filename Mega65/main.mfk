@@ -1,0 +1,38 @@
+
+
+//	build 
+//	millfork -t mega65_small -i . main.mfk
+
+import stdio
+array m65_screen[80*25] @$800
+
+const array hex_table=[$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$1,$2,$3,$4,$5,$6]
+void put_hex(word offset,byte value) {
+	m65_screen[offset] = hex_table[value>>4]
+	m65_screen[offset+1] = hex_table[value&$f]
+}
+
+void main() {
+
+	asm { sei }
+	
+	M65_40hz()
+	M65_defaultmem()
+	M65_VIC4Enable()
+	put_hex(0,$ff)
+
+	while true {
+		asm 
+		{
+vbl:
+			lda $d012
+			sta $d020 
+			cmp #$f0
+			bne vbl
+
+		}
+	}
+}
+
+const array demo="bank 0000"
+

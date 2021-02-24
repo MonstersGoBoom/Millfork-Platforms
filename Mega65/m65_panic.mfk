@@ -1,0 +1,8 @@
+void _panic() {
+    asm {
+        SEI
+        LDA #2
+        STA $D020
+    }
+    while(true){}
+}
