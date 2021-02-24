@@ -4,9 +4,7 @@ Dumping ground for platform support for https://github.com/KarolS/millfork
 
 Simple demo's to set up a specific system and get graphics and sprites and input working.
 
-So far MSX and Sega Master System is available. 
-
-PCEngine is W.I.P. see below.
+So far Gameboy Color,MSX, and Sega Master System are available. 
 
 MSX support.
 
@@ -16,10 +14,10 @@ Sega Master System support.
 
 ![](gifs/sms.gif)
 
-Preliminary PC Engine support.
-Vsync doesn't work. No sprite or input support as yet.
+Gameboy Color support. ( extended original GB files ) 
 
-![](gifs/pce.gif)
+![](gifs/gbc.gif)
+
 
 
 
