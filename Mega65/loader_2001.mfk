@@ -1,4 +1,4 @@
-#if not(CBM)
+#if not(MEGA_65)
 #warn loader_2001 module should be only used on mega65 targets
 #endif
 
