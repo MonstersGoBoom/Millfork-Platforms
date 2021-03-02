@@ -6,6 +6,10 @@ Simple demo's to set up a specific system and get graphics and sprites and input
 
 So far Gameboy Color,MSX, and Sega Master System are available. 
 
+Mega65. 
+
+very preliminary Mega65 target support. can build a <64kb prg and run.
+
 MSX support.
 
 ![](gifs/msx.gif)
