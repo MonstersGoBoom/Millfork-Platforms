@@ -1,0 +1,31 @@
+
+// 	
+//	simply "allocate" from the heap 
+//	this is assuming you'd want to reset the heap on level change. 
+//	no freeing methodology 
+//	NOTE : assume the data returned isn't initialized to any fixed state 
+//
+
+word _malloc_ptr_ = 0
+
+void reset_malloc()
+{
+	_malloc_ptr_ = segment.default.heapstart
+}
+
+pointer malloc(word size)
+{
+pointer result 
+	if (size==0)
+	{
+		return 0
+	}
+	if (_malloc_ptr_==0)
+	{
+		reset_malloc()
+	}
+	result = pointer(_malloc_ptr_)
+	_malloc_ptr_+=size
+	return result
+}
+

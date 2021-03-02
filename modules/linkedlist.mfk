@@ -1,0 +1,160 @@
+
+import malloc
+
+//--------------------------------------------------
+// linked list structure 
+//--------------------------------------------------
+struct list_t {
+	//	doubly linked list part
+	pointer.list_t prev 
+	pointer.list_t next 
+	bool 		active
+	//	pointer to extra data
+	pointer data
+}
+
+//--------------------------------------------------
+//	header to store data and count 
+//	used by all functions to pass lists around 
+//--------------------------------------------------
+struct list_root_t {
+	word count
+	pointer.list_t 	root
+	pointer.list_t 	heap
+}
+//--------------------------------------------------
+//	walk will set this so when the callback is called you can reference list_self 
+//	since we can't pass pointers in function calls
+//--------------------------------------------------
+volatile pointer.list_t list_self
+
+//--------------------------------------------------
+//	create a new list
+//	count = max number of elements in the heap 
+//	datasize = additional data needed 
+//--------------------------------------------------
+pointer.list_root_t List_New(word count,word datasize)
+{
+word data,i 
+pointer.list_root_t list 
+	data = malloc((sizeof(list_t) * count) + sizeof(list_root_t))
+
+	list = pointer.list_root_t(data)
+	list->root = nullptr
+	list->heap = pointer.list_t(data + sizeof(list_root_t))
+	list->count = count
+	list_self = list->heap
+	for i,0,to,count {
+		list_self->next = nullptr
+		list_self->prev = nullptr	
+		list_self->data = malloc(datasize)
+		list_self->active = false
+		list_self.raw+=sizeof(list_t)
+	}
+	return list
+}
+//--------------------------------------------------
+//	find a free slot in the list
+//--------------------------------------------------
+pointer.list_t List_Alloc(pointer.list_root_t root)
+{
+byte i
+pointer.list_t result 
+
+	result = root->heap[0].pointer 
+
+	for i,0,to,root->count
+	{
+		if ((result->active==false))
+		{
+			result->next = root->root
+			result->prev = nullptr 
+			result->active = true
+			if (root->root!=nullptr)
+			{
+				root->root->prev = result
+			}
+			root->root = result
+  		return result
+		}
+		result.raw+=sizeof(list_t)
+	}
+	panic()
+	return nullptr
+}
+//--------------------------------------------------
+//	walk the list 
+//	calling callback for each one
+//--------------------------------------------------
+void List_Walk(pointer.list_root_t root,function.void.to.void callback)
+{
+	if callback==nullptr {
+		return
+	}
+	list_self = root->root
+	//	process the list 
+	while list_self != nullptr 
+	{
+		call(callback)
+		list_self = list_self->next
+	}	
+}
+
+//--------------------------------------------------
+// remove element from list 
+//--------------------------------------------------
+void List_Delete(pointer.list_root_t root,pointer.list_t del)
+{
+pointer.list_t self_save
+	if (del->next!=nullptr) {
+		del->next->prev = del->prev 
+	}
+	if (del->prev!=nullptr) {
+		del->prev->next = del->next 
+	}
+	else {
+		root->root = del->next
+	}
+	del->active = false
+	del->next = nullptr
+	del->prev = nullptr
+}
+
+// example usage
+
+#if 0 
+struct thing_t {
+	word xpos 
+	word ypos	
+}
+
+pointer.list_root_t thing_list
+pointer.list_t 			thing_list_item 
+
+void ThingWalkCallback()
+{
+pointer.thing_t thing
+
+	thing = pointer.thing_t(list_self->data)
+	putspriteat(thing->xpos,thing->ypos)
+}
+
+void ThingsTest()
+{
+	thing_list = List_New(32,sizeof(thing_t))
+	thing_list_item = List_Alloc(thing_list)
+
+	//	crazy that this works :) 
+	pointer.thing_t(thing_list_item->data)->xpos = 64
+	pointer.thing_t(thing_list_item->data)->ypos = 128
+	pointer.thing_t(thing_list_item->data)->xpos += pointer.thing_t(thing_list_item->data)->ypos
+
+
+	thing_list_item = List_Alloc(thing_list)
+	List_Delete(thing_list,thing_list_item)
+	thing_list_item = List_Alloc(thing_list)
+
+	List_Walk(thing_list,ThingWalkCallback.pointer)
+}
+
+#endif
