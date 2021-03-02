@@ -1,0 +1,54 @@
+
+
+//	build 
+//	millfork -t mega65_large -i . main.mfk
+
+import stdio
+array(word) m65_screen[40*25] @$800
+array(word) m65_colors[40*25] @$d800
+
+void main() {
+	asm {
+		sei
+	}
+	M65_40hz()
+	M65_defaultmem()
+	M65_VIC4Enable()
+
+	while true {
+		vic_border = segment.bank4.bank
+		vic_border = message_bank1.lo
+		vic_border = message_bank2.lo
+		vic_border = message_bank3.lo
+		vic_border = message_bank4.lo
+		asm 
+		{
+vbl:
+			//	show raster pos as colors
+			lda $d012
+			cmp #$f0
+			bne vbl
+		}
+	}
+}
+
+segment(bank1)
+{
+	const array message_bank1 = "bank1"p
+}
+
+segment(bank2)
+{
+	const array message_bank2 = "bank2"p
+}
+
+segment(bank3)
+{
+	const array message_bank3 = "bank3"p
+}
+
+segment(bank4)
+{
+	const array message_bank4 = "bank4"p
+}
+

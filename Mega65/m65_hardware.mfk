@@ -4,7 +4,7 @@
 import cpu6510
 import c64_vic
 import c64_sid
-import c64_cia
+import c64_cia	
 import m65_vic4
 
 // have to use this method as we can't just store opcodes directly 
@@ -15,6 +15,8 @@ asm macro void M65_40hz()
 {
 	lda #$41
 	sta $0
+	lda #$c0 
+	sta $d031
 }
 
 asm macro void M65_VIC4Enable()
