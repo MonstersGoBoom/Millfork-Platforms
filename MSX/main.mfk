@@ -1,6 +1,6 @@
 
 import MSX
-//	millfork main.mfk -t msx
+//	millfork main.mfk -t msx -i .
 // 	basic example of getting a tilemap and sprite on screen and moving with joystick 
 //  NOTE: joystick is broken currently with optimization ?
 

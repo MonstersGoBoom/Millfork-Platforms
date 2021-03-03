@@ -1,6 +1,6 @@
 
 import SegaMasterSystem
-// millfork.exe main.mfk -t SegaMasterSystem
+// millfork.exe main.mfk -t SegaMasterSystem -i .
 // basic example of getting a tilemap and sprite on screen and moving with joystick 
 
 void main()
