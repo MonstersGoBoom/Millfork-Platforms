@@ -25,4 +25,16 @@ array(byte) vic4_green_channel[256] @$d200
 array(byte) vic4_blue_channel[256] @$d300
 
 
+asm macro void vic4_40_column_mode()
+{
+	lda $D031
+	and #$7F
+	sta $D031
+}
 
+asm macro void vic4_80_column_mode()
+{
+	lda $D031
+	ora #$80
+	sta $D031
+}
